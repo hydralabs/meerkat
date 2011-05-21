@@ -1,8 +1,0 @@
-argv = ['/Users/nick/dev/meerkat/bin/waf', 'distclean', 'configure', '--mxmlc=~/dev/bigsky/lib/support/flex_sdks/4.0.0.0/bin/mxmlc']
-environ = {'SSH_AUTH_SOCK': '/tmp/launch-JbOfKN/Listeners', 'VIRTUAL_ENV': '/Users/nick/dev/meerkat', 'TERM_PROGRAM_VERSION': '273.1', 'SHELL': '/bin/bash', 'LOGNAME': 'nick', 'USER': 'nick', 'HOME': '/Users/nick', 'PATH': '/Users/nick/dev/meerkat/bin:/opt/local/bin:/opt/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin', 'PS1': '(meerkat)\\[\\033[0;32m\\]\\u@\\[\\033[0;31m\\]\\h\\[\\033[00m\\]:\\[\\033[0;34m\\]\\w\\[\\033[0;33m\\] $(parse_git_branch)\\[\\033[00m\\]\\$ ', 'DISPLAY': '/tmp/launch-m22J8o/org.macosforge.xquartz:0', 'TMPDIR': '/var/folders/bu/bun4nN8wHjuhW8+DaEi4OU+++TI/-Tmp-/', 'TERM_PROGRAM': 'Apple_Terminal', 'LANG': 'en_AU.UTF-8', 'TERM': 'xterm-color', 'Apple_PubSub_Socket_Render': '/tmp/launch-CiGGmB/Render', 'SHLVL': '1', 'OLDPWD': '/Users/nick/dev/meerkat/meerkat/build', '__CF_USER_TEXT_ENCODING': '0x1F5:0:0', 'PWD': '/Users/nick/dev/meerkat/meerkat', '_': '/Users/nick/dev/meerkat/bin/waf', 'COMMAND_MODE': 'unix2003'}
-files = ['/Users/nick/projects/opensource/rtmpy/meerkat/wscript']
-hash = 664679101881491761
-options = {'files': '', 'jobs': 16, 'verbose': 0, 'nocache': False, 'progress_bar': 0, 'top': '', 'mxmlc': '~/dev/bigsky/lib/support/flex_sdks/4.0.0.0/bin/mxmlc', 'destdir': '', 'keep': False, 'zones': '', 'prefix': '/usr/local/', 'download': False, 'force': False, 'targets': '', 'out': ''}
-out_dir = '/Users/nick/projects/opensource/rtmpy/meerkat/build'
-run_dir = '/Users/nick/projects/opensource/rtmpy/meerkat'
-top_dir = '/Users/nick/projects/opensource/rtmpy/meerkat/src'
