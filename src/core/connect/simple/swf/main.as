@@ -9,7 +9,7 @@ package {
 
 
 
-    public class simple extends TestCase
+    public class main extends TestCase
     {
         public override function run():void
         {
