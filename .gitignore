@@ -1,2 +1,3 @@
 /build/
 .lock-wafbuild
+.DS_Store
