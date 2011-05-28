@@ -1,3 +1,9 @@
+/**
+ * This file is a Jinja template that is generated for each SWF test.
+ *
+ *
+ */
+
 package meerkat
 {
     import flash.display.MovieClip;
@@ -14,8 +20,10 @@ package meerkat
 
     public class TestCase extends MovieClip
     {
+        private static var _nc_id:uint = 0;
         public var status:String;
-        public var serverUrl:String = 'rtmp://10.1.1.5';
+        public var serverUrl:String = '{{ server_url }}';
+        public var loggingUrl:String = '{{ logging_url }}';
         public var nc:NetConnection;
 
 
@@ -41,10 +49,14 @@ package meerkat
         {
             var nc:NetConnection = new NetConnection();
 
+            nc.test_case_id = _nc_id;
+
+            _nc_id += 1;
+
             // NetStatus
             nc.addEventListener(NetStatusEvent.NET_STATUS, function(event:NetStatusEvent):void
             {
-                trace("onNetStatus: " + event);
+                trace( "onNetStatus: " + event);
             });
 
             nc.addEventListener(NetStatusEvent.NET_STATUS, this.onNetStatus);
