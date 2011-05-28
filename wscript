@@ -1,6 +1,7 @@
 """
 """
 
+import sys
 import os.path
 
 
@@ -23,6 +24,22 @@ def configure(ctx):
 
     ctx.env.MXMLC = os.path.abspath(os.path.expanduser(mxmlc))
     ctx.env.SERVER_ROOT = ctx.options.server_root.rstrip('/') + '/'
+    ctx.env.JAVA = ctx.find_program('java')
+
+    if not ctx.env.SIKULI_HOME:
+        ctx.env.SIKULI_HOME = get_sikuli_home(ctx)
+        ctx.msg('Setting SIKULI_HOME', ctx.env.SIKULI_HOME)
+
+    if not os.path.exists(ctx.env.SIKULI_HOME):
+        ctx.fatal('Unable to find Sikuli at %r' % (ctx.env.SIKULI_HOME,))
+
+
+
+def get_sikuli_home(ctx):
+    if sys.platform == 'darwin':
+        return '/Applications/Sikuli-IDE.app/Contents/Resources/Java'
+
+    raise NotImplementedError("Don't know how to determine default SIKULI_HOME")
 
 
 
@@ -34,6 +51,7 @@ def generate_meerkat_file(ctx, src_node, dest_node, **context):
     t = Template(src_node.read())
 
     dest_node.write(t.render(**context))
+
 
 
 def generate_meerkat_lib(ctx, root, **context):
