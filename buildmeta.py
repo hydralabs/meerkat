@@ -13,7 +13,7 @@ def get_sikuli_home(ctx):
 
 
 
-def generate_meerkat_file(ctx, src_node, dest_node, **context):
+def generate(src_node, dest_node, **context):
     """
     """
     from jinja2 import Template
@@ -34,14 +34,15 @@ def generate_meerkat_lib(ctx, root, **context):
 
     for src in ctx.path.ant_glob(src_path + '*.as'):
         dest = meerkat_dir.find_or_declare(src.nice_path()[len(src_path):])
-        generate_meerkat_file(ctx, src, dest, **context)
+        generate(src, dest, **context)
 
     return meerkat_dir
 
 
 
 def build_swf(ctx):
-    """Build the meerkat AS library and then generate all suite SWFs.
+    """
+    Build the meerkat AS library and then generate all suite SWFs.
 
     A SWF test is defined as under src directory that have the format swf/main.as
     """
