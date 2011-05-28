@@ -20,7 +20,6 @@ package meerkat
 
     public class TestCase extends MovieClip
     {
-        private static var _nc_id:uint = 0;
         public var status:String;
         public var serverUrl:String = '{{ server_url }}';
         public var loggingUrl:String = '{{ logging_url }}';
@@ -48,10 +47,6 @@ package meerkat
         public function buildNetConnection():NetConnection
         {
             var nc:NetConnection = new NetConnection();
-
-            nc.test_case_id = _nc_id;
-
-            _nc_id += 1;
 
             // NetStatus
             nc.addEventListener(NetStatusEvent.NET_STATUS, function(event:NetStatusEvent):void
