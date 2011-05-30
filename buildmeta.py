@@ -67,3 +67,15 @@ def build_swf(ctx):
         tgt = swf_suite.find_or_declare(swf_name)
 
         ctx(rule=rule, source=f, target=tgt)
+
+
+
+def build_runner(ctx):
+    """
+    Builds the Sikuli runner.
+    """
+    runner = ctx.path.find_or_declare('runner.sikuli')
+
+    import shutil
+
+    shutil.copytree(ctx.path.find_node('src/runner.sikuli').abspath(), runner.abspath())

@@ -25,6 +25,10 @@ def configure(ctx):
         mxmlc = ctx.find_program('mxmlc')
 
     ctx.env.MXMLC = os.path.abspath(os.path.expanduser(mxmlc))
+
+    if not ctx.options.server_root:
+        ctx.fatal('Require --server_root arg')
+
     ctx.env.SERVER_ROOT = ctx.options.server_root.rstrip('/') + '/'
     ctx.env.JAVA = ctx.find_program('java')
 
@@ -38,7 +42,7 @@ def configure(ctx):
     ctx.env.FLASH_PLAYER = ctx.options.flash_player
 
     if not ctx.env.FLASH_PLAYER:
-        ctx.fatal('Standalone Flash player required')
+        ctx.fatal('Standalone Flash player required, supply --flash_player')
 
     ctx.msg('Using Flash Standalone Player', ctx.env.FLASH_PLAYER)
 
@@ -46,7 +50,7 @@ def configure(ctx):
 
 def build(ctx):
     buildmeta.build_swf(ctx)
-
+    #buildmeta.build_runner(ctx)
 
 
 def run(ctx):
