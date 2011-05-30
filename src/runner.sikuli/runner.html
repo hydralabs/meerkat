@@ -73,17 +73,40 @@
 <span class="kw">import</span> sys
 <span class="kw">import</span> os
 
-<span class="kw">print</span> sys.argv
-<span class="kw">print</span> os.getcwd()
-
 flash_player = sys.argv[<span class="dig">1</span>]
 swf_to_play = sys.argv[<span class="dig">2</span>]
 
+test_timeout = <span class="dig">10</span>
+
+result = <span class="str">'pending'</span>
+
 openApp(flash_player)
 switchApp(flash_player)
-<span class="skw">type</span>(<span class="str">"O"</span>, KEY_SHIFT + KEY_CMD)
-paste(<span class="str">'file://'</span> + os.getcwd() + os.path.sep + swf_to_play)
-<span class="skw">click</span>(<span class="skw">find</span>(<img src="1306738115396.png" />))
+
+<span class="kw">def</span> open_swf():
+        <span class="skw">type</span>(<span class="str">"O"</span>, KEY_SHIFT + KEY_CMD)
+        paste(<span class="str">'file://'</span> + os.getcwd() + os.path.sep + swf_to_play)
+        <span class="skw">click</span>(<span class="skw">find</span>(<img src="1306738115396.png" />))
+
+<span class="kw">def</span> onFailure(event):
+        <span class="kw">global</span> result
+
+        event.region.stopObserver()
+
+        result = <span class="str">'failure'</span>
+
+
+
+<span class="kw">def</span> get_test_result():
+        onAppear(<img src="1306740001745.png" />, onFailure)
+
+        observe(test_timeout)
+
+open_swf()
+get_test_result()
+closeApp(flash_player)
+
+<span class="kw">print</span> result
 </pre>
 </body>
 </html>
