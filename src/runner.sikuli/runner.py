@@ -12,6 +12,7 @@ result = 'pending'
 
 app = App.open(flash_player)
 app.focus()
+wait(1)
 
 def open_swf():
 	type("O", KEY_SHIFT + KEY_CMD)
