@@ -76,16 +76,18 @@
 flash_player = sys.argv[<span class="dig">1</span>]
 swf_to_play = sys.argv[<span class="dig">2</span>]
 
+full_path = <span class="str">'file://'</span> + os.getcwd() + os.path.sep + swf_to_play
+
 test_timeout = <span class="dig">10</span>
 
 result = <span class="str">'pending'</span>
 
-openApp(flash_player)
-switchApp(flash_player)
+app = App.open(flash_player)
+app.focus()
 
 <span class="kw">def</span> open_swf():
         <span class="skw">type</span>(<span class="str">"O"</span>, KEY_SHIFT + KEY_CMD)
-        paste(<span class="str">'file://'</span> + os.getcwd() + os.path.sep + swf_to_play)
+        paste(full_path)
         <span class="skw">click</span>(<span class="skw">find</span>(<img src="1306738115396.png" />))
 
 <span class="kw">def</span> onFailure(event):
@@ -104,7 +106,8 @@ switchApp(flash_player)
 
 open_swf()
 get_test_result()
-closeApp(flash_player)
+<span class="skw">type</span>(<span class="str">"q"</span>, KEY_CMD)
+
 
 <span class="kw">print</span> result
 </pre>

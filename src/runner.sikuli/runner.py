@@ -4,16 +4,18 @@ import os
 flash_player = sys.argv[1]
 swf_to_play = sys.argv[2]
 
+full_path = 'file://' + os.getcwd() + os.path.sep + swf_to_play
+
 test_timeout = 10
 
 result = 'pending'
 
-openApp(flash_player)
-switchApp(flash_player)
+app = App.open(flash_player)
+app.focus()
 
 def open_swf():
 	type("O", KEY_SHIFT + KEY_CMD)
-	paste('file://' + os.getcwd() + os.path.sep + swf_to_play)
+	paste(full_path)
 	click(find("1306738115396.png"))
 
 def onFailure(event):
@@ -32,6 +34,7 @@ def get_test_result():
 
 open_swf()
 get_test_result()
-closeApp(flash_player)
+type("q", KEY_CMD)
+
 
 print result
