@@ -81,16 +81,9 @@ swf_to_play = sys.argv[<span class="dig">2</span>]
 
 openApp(flash_player)
 switchApp(flash_player)
-r = Region(<span class="dig">0</span>,<span class="dig">0</span>,<span class="dig">1204</span>,<span class="dig">760</span>)
-
-m = r.<span class="skw">find</span>(<img src="foo.png" />)
-<span class="skw">click</span>(m)
-<span class="skw">click</span>(m.below(<span class="dig">20</span>))
-
-<span class="skw">click</span>(r.<span class="skw">find</span>(<img src="Address-1.png" />).right(<span class="dig">30</span>))
-
+<span class="skw">type</span>(<span class="str">"O"</span>, KEY_SHIFT + KEY_CMD)
 paste(<span class="str">'file://'</span> + os.getcwd() + os.path.sep + swf_to_play)
-<span class="skw">click</span>(r.<span class="skw">find</span>(<img src="1306733774793.png" />))
+<span class="skw">click</span>(<span class="skw">find</span>(<img src="1306738115396.png" />))
 </pre>
 </body>
 </html>
