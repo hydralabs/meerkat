@@ -3,6 +3,7 @@
 
 import sys
 import os.path
+import shutil
 
 
 def get_sikuli_home(ctx):
@@ -76,8 +77,6 @@ def build_runner(ctx):
     """
     runner = ctx.path.find_or_declare('runner.sikuli')
 
-    import shutil
-
     shutil.copytree(ctx.path.find_node('src/runner.sikuli').abspath(), runner.abspath())
 
 
@@ -102,8 +101,52 @@ def build_fms_apps(ctx):
         app_node = fms_build.find_or_declare('_'.join(swf_namespace))
 
         try:
-            os.unlink(app_node.abspath())
+            shutil.rmtree(app_node.abspath())
         except OSError:
             pass
 
         shutil.copytree(app_src_dir.abspath(), app_node.abspath())
+
+
+
+def build_python_server_runner(ctx):
+    """
+    Copy the runner 
+    """
+    src = ctx.path.find_node('src/server_runner.py')
+    dest = ctx.path.find_or_declare('python/runner.py')
+
+    try:
+        os.unlink(dest.abspath())
+    except OSError:
+        pass
+
+    shutil.copy2(src.abspath(), dest.abspath())
+
+
+
+def build_python_server(ctx):
+    """
+    Builds a number of python scripts that can be run from the commandline.
+
+    These scripts
+    """
+    build_python_server_runner(ctx)
+
+    server_build_node = ctx.path.find_or_declare('python/server')
+
+
+    for f in ctx.path.ant_glob('src/**/python/server.py'):
+        rel_path = f.abspath()[len(ctx.top_dir):].strip(os.path.sep)
+
+        split_path = rel_path.split(os.path.sep)
+        test_namespace = split_path[2:-2]
+
+        app_node = server_build_node.find_or_declare('_'.join(test_namespace) + '.py')
+
+        try:
+            os.unlink(app_node.abspath())
+        except OSError:
+            pass
+
+        shutil.copy2(f.abspath(), app_node.abspath())

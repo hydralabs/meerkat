@@ -52,6 +52,7 @@ def build(ctx):
     buildmeta.build_swf(ctx)
     #buildmeta.build_runner(ctx)
     buildmeta.build_fms_apps(ctx)
+    buildmeta.build_python_server(ctx)
 
 
 def run(ctx):
