@@ -79,3 +79,31 @@ def build_runner(ctx):
     import shutil
 
     shutil.copytree(ctx.path.find_node('src/runner.sikuli').abspath(), runner.abspath())
+
+
+
+def build_fms_apps(ctx):
+    """
+    Copies all src/test/suite/name/fms/* to build/fms/test_suite_name/*
+
+    The contents in build/fms can then be dropped into an FMS install and restarted.
+    """
+    import shutil
+
+    fms_build = ctx.path.find_or_declare('fms')
+
+    for f in ctx.path.ant_glob('src/**/fms/main.asc'):
+        app_src_dir = f.parent
+        rel_path = f.abspath()[len(ctx.top_dir):].strip(os.path.sep)
+
+        split_path = rel_path.split(os.path.sep)
+        swf_namespace = split_path[2:-2]
+
+        app_node = fms_build.find_or_declare('_'.join(swf_namespace))
+
+        try:
+            os.unlink(app_node.abspath())
+        except OSError:
+            pass
+
+        shutil.copytree(app_src_dir.abspath(), app_node.abspath())

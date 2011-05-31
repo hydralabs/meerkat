@@ -51,6 +51,7 @@ def configure(ctx):
 def build(ctx):
     buildmeta.build_swf(ctx)
     #buildmeta.build_runner(ctx)
+    buildmeta.build_fms_apps(ctx)
 
 
 def run(ctx):
