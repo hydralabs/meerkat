@@ -13,7 +13,7 @@ package {
     {
         public override function run():void
         {
-            this.nc.connect(this.serverUrl);
+            this.nc.connect(this.serverUrl)
         }
 
         public override function onNetStatus(event:NetStatusEvent):void

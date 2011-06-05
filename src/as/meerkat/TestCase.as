@@ -113,6 +113,7 @@ package meerkat
          */
         public function success():void
         {
+            /*
             if (this.status != 'pending')
             {
                 trace('Call to success when status already set')
@@ -120,6 +121,7 @@ package meerkat
 
                 return;
             }
+            */
 
             this._drawRect(0x00FF00);
             this.status = 'success';

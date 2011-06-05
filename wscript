@@ -49,16 +49,11 @@ def configure(ctx):
 
 
 def build(ctx):
+    buildmeta.clear_test_file(ctx)
     buildmeta.build_swf(ctx)
-    #buildmeta.build_runner(ctx)
+    buildmeta.build_sikuli_runner(ctx)
     buildmeta.build_fms_apps(ctx)
     buildmeta.build_python_server(ctx)
+    buildmeta.build_runner(ctx)
 
-
-def run(ctx):
-    """
-    Run the test suite.
-
-    Ensures that the server component is deployed and iterates over all the swfs
-    using Sikuli to determine a result for that test.
-    """
+    buildmeta.write_test_file(ctx, buildmeta.get_tests(ctx))
