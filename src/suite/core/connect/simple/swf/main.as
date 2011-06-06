@@ -2,9 +2,6 @@
  * Test a simple connection attempt to a server
  */
 
-
-// jacob is silly
-
 package {
     import meerkat.TestCase;
 
