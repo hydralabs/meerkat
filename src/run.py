@@ -2,6 +2,7 @@
 """
 
 import subprocess
+import os
 import sys
 import time
 
@@ -21,7 +22,8 @@ def run_py_server(**context):
     Run a python server and return a handle to the subprocess
     """
     args = ['python/runner.py', context['module']]
-    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                         env=os.environ)
 
     if p.poll() is not None:
         # we died
@@ -35,7 +37,8 @@ def run_swf(**context):
     Fire up the Sikuli runner
     """
     args = [JAVA, '-jar', SIKULI_SCRIPT, SIKULI_RUNNER, FLASH_PLAYER, context['file']]
-    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                         env=os.environ)
 
     return p
 
