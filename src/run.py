@@ -2,7 +2,6 @@
 """
 
 import subprocess
-import time
 import sys
 
 
@@ -20,7 +19,8 @@ def run_py_server(**context):
     """
     Run a python server and return a handle to the subprocess
     """
-    p = subprocess.Popen(['python/runner.py', context['module']])
+    args = ['python/runner.py', context['module']]
+    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     if p.poll() is not None:
         # we died
@@ -33,7 +33,8 @@ def run_swf(**context):
     """
     Fire up the Sikuli runner
     """
-    p = subprocess.Popen([JAVA, '-jar', SIKULI_SCRIPT, SIKULI_RUNNER, FLASH_PLAYER, context['file']])
+    args = [JAVA, '-jar', SIKULI_SCRIPT, SIKULI_RUNNER, FLASH_PLAYER, context['file']]
+    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     return p
 
@@ -59,4 +60,12 @@ for name in ordered:
     client_process = run_client(**client_context)
 
     client_process.wait()
+    print 'out:'
+    print repr(client_process.stdout.read())
+    print '==>'
+    print 'err:'
+    print repr(client_process.stderr.read())
+
+
     server_process.terminate()
+
