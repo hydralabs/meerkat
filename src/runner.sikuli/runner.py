@@ -14,10 +14,13 @@ app = App.open(flash_player)
 app.focus()
 wait(1)
 
+
+
 def open_swf():
     type("O", KEY_SHIFT + KEY_CMD)
     paste(full_path)
-    click(find("1306738115396.png"))
+    type("\n")
+
 
 
 def onFailure(event):
