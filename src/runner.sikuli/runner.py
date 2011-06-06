@@ -54,4 +54,7 @@ finally:
     type("q", KEY_CMD)
 
 
+if result == 'pending':
+    result = 'nomatch'
+
 print 'RESULT:', result
