@@ -39,8 +39,8 @@ def onSuccess(event):
 
 
 def get_test_result():
-    onAppear("failure.png", onFailure)
-    onAppear("success.png", onSuccess)
+    onAppear(Pattern("failure.png").exact(), onFailure)
+    onAppear(Pattern("success.png").exact(), onSuccess)
 
     observe(test_timeout)
 
@@ -54,4 +54,4 @@ finally:
     type("q", KEY_CMD)
 
 
-print result
+print 'RESULT:', result
