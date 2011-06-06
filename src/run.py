@@ -306,3 +306,6 @@ for name in ordered:
 
 
 results.report()
+
+if not results.passed:
+    sys.exit(1)
