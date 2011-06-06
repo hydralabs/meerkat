@@ -18,8 +18,6 @@ package {
 
         public override function onNetStatus(event:NetStatusEvent):void
         {
-            this.failure();
-            return;
             if (event.info.code == "NetConnection.Connect.Success")
             {
                 this.success();

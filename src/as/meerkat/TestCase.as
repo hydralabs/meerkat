@@ -8,6 +8,8 @@ package meerkat
 {
     import flash.display.MovieClip;
     import flash.display.Sprite;
+    import flash.text.TextField;
+    import flash.text.TextFormat;
 
     import flash.net.NetConnection;
 
@@ -124,6 +126,7 @@ package meerkat
             */
 
             this._drawRect(0x00FF00);
+            this._writeText('SUCCESS');
             this.status = 'success';
         }
 
@@ -141,6 +144,7 @@ package meerkat
             }
 
             this._drawRect(0xFF0000);
+            this._writeText('FAILURE');
             this.status = 'failure';
         }
 
@@ -151,6 +155,7 @@ package meerkat
         {
             // black
             this._drawRect(0xFF00FF);
+            this._writeText('ERROR');
             this.status = 'error';
         }
 
@@ -161,7 +166,28 @@ package meerkat
         {
             // gray
             this._drawRect(0xCCCCCC);
+            this._writeText('TIMEOUT');
             this.status = 'timeout';
+        }
+
+        private function _writeText(text:String):void
+        {
+            var t:TextField = new TextField();
+            t.text = text;
+
+            t.width = 1000;
+            t.x = 25;
+            t.y = 25;
+
+            // are you frickin kidding me
+            var myFormat:TextFormat = new TextFormat();
+
+            //Adding some bigger text size
+            myFormat.size = 64;
+
+            t.setTextFormat(myFormat);
+
+            this.addChild(t);
         }
 
         private function _drawRect(colour:int):void

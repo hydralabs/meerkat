@@ -75,6 +75,10 @@ class Result(object):
         self.parent.addFailure(self)
 
 
+    def timeout(self):
+        self.parent.addTimeout(self)
+
+
     def unexpectedError(self):
         self.parent.addUnexpectedError(self)
 
@@ -168,6 +172,22 @@ class ResultSet(object):
 
         self.passed = False
         print 'ERROR?!'
+
+
+    def addTimeout(self, result):
+        r = self.results[self._currentResult]
+
+        r['status'] = 'timeout'
+        r['server_pipes'] = result.server_pipes
+        r['client_pipes'] = result.client_pipes
+
+        try:
+            self.meta_results['timeout'] += 1
+        except KeyError:
+            self.meta_results['timeout'] = 1
+
+        self.passed = False
+        print 'TIMEOUT'
 
 
     def finish(self, name):

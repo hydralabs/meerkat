@@ -12,7 +12,7 @@ result = 'pending'
 
 app = App.open(flash_player)
 app.focus()
-wait(1)
+wait(0.5)
 
 
 
@@ -58,12 +58,14 @@ def onTimeout(event):
 
 
 def get_test_result():
-    onAppear(Pattern("failure.png").exact(), onFailure)
-    onAppear(Pattern("success.png").exact(), onSuccess)
-    onAppear(Pattern("error.png").exact(), onError)
-    onAppear(Pattern("timeout.png").exact(), onTimeout)
+    r = Region(0, 0, 400, 400)
 
-    observe(test_timeout)
+    r.onAppear(Pattern("failure.png"), onFailure)
+    r.onAppear(Pattern("success.png"), onSuccess)
+    r.onAppear(Pattern("error.png"), onError)
+    r.onAppear(Pattern("timeout.png"), onTimeout)
+
+    r.observe(test_timeout)
 
 
 
