@@ -41,9 +41,27 @@ def onSuccess(event):
 
 
 
+def onError(event):
+    global result
+
+    event.region.stopObserver()
+
+    result = 'error'
+
+
+def onTimeout(event):
+    global result
+
+    event.region.stopObserver()
+
+    result = 'timeout'
+
+
 def get_test_result():
     onAppear(Pattern("failure.png").exact(), onFailure)
     onAppear(Pattern("success.png").exact(), onSuccess)
+    onAppear(Pattern("error.png").exact(), onError)
+    onAppear(Pattern("timeout.png").exact(), onTimeout)
 
     observe(test_timeout)
 

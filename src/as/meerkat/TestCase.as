@@ -150,7 +150,7 @@ package meerkat
         public function error():void
         {
             // black
-            this._drawRect(0x000000);
+            this._drawRect(0xFF00FF);
             this.status = 'error';
         }
 
