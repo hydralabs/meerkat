@@ -298,8 +298,6 @@ for name in ordered:
 
     result = get_sikuli_result(client_pipes['stdout'])
 
-    print result
-
     test.setServerPipes(server_pipes)
     test.setClientPipes(client_pipes)
 
