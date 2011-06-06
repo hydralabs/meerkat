@@ -17,6 +17,7 @@ wait(0.5)
 
 
 def open_swf():
+    print 'Opening file:', full_path
     type("O", KEY_SHIFT + KEY_CMD)
     paste(full_path)
     type("\n")
