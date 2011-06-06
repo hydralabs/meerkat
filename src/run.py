@@ -83,6 +83,10 @@ class Result(object):
         self.parent.addUnexpectedError(self)
 
 
+    def nomatch(self):
+        self.parent.addUnexpectedError(self)
+
+
 
 class ResultSet(object):
     """
