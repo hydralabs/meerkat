@@ -15,27 +15,43 @@ app.focus()
 wait(1)
 
 def open_swf():
-	type("O", KEY_SHIFT + KEY_CMD)
-	paste(full_path)
-	click(find("1306738115396.png"))
+    type("O", KEY_SHIFT + KEY_CMD)
+    paste(full_path)
+    click(find("1306738115396.png"))
+
 
 def onFailure(event):
-	global result
-	
-	event.region.stopObserver()
-	
-	result = 'failure'	
+    global result
+    
+    event.region.stopObserver()
+    
+    result = 'failure'
+
+
+
+def onSuccess(event):
+    global result
+
+    event.region.stopObserver()
+
+    result = 'success'
 
 
 
 def get_test_result():
-	onAppear("1306740001745.png", onFailure)
-	
-	observe(test_timeout)
+    onAppear("failure.png", onFailure)
+    onAppear("success.png", onSuccess)
+
+    observe(test_timeout)
+
+
 
 open_swf()
-get_test_result()
-type("q", KEY_CMD)
+
+try:
+    get_test_result()
+finally:
+    type("q", KEY_CMD)
 
 
 print result
