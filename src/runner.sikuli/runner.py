@@ -14,10 +14,13 @@ app = App.open(flash_player)
 app.focus()
 wait(1)
 
+
+
 def open_swf():
     type("O", KEY_SHIFT + KEY_CMD)
     paste(full_path)
-    click(find("1306738115396.png"))
+    type("\n")
+
 
 
 def onFailure(event):
@@ -38,9 +41,27 @@ def onSuccess(event):
 
 
 
+def onError(event):
+    global result
+
+    event.region.stopObserver()
+
+    result = 'error'
+
+
+def onTimeout(event):
+    global result
+
+    event.region.stopObserver()
+
+    result = 'timeout'
+
+
 def get_test_result():
     onAppear(Pattern("failure.png").exact(), onFailure)
     onAppear(Pattern("success.png").exact(), onSuccess)
+    onAppear(Pattern("error.png").exact(), onError)
+    onAppear(Pattern("timeout.png").exact(), onTimeout)
 
     observe(test_timeout)
 
@@ -53,5 +74,8 @@ try:
 finally:
     type("q", KEY_CMD)
 
+
+if result == 'pending':
+    result = 'nomatch'
 
 print 'RESULT:', result

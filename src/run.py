@@ -192,25 +192,22 @@ class ResultSet(object):
 
             cp = context['client_pipes']
 
-            print cp
-
             print 'Client stdout:'
-            print '\n  '.join(cp['stdout'])
+            print '  ' + '\n  '.join(cp['stdout'])
             print
 
             print 'Client stderr:'
-            print '\n  '.join(cp['stderr'])
+            print '  ' + '\n  '.join(cp['stderr'])
             print
 
             cp = context['server_pipes']
-            print cp
 
             print 'Server stdout:'
-            print '\n  '.join(cp['stdout'])[-1:]
+            print '  ' + '\n  '.join(cp['stdout'])
             print
 
             print 'Server stderr:'
-            print '\n  '.join(cp['stderr'])[-1:]
+            print '  ' + '\n  '.join(cp['stderr'])
             print
 
         print '-' * 80
