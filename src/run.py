@@ -9,9 +9,9 @@ import time
 from tests import tests
 
 
-FLASH_PLAYER = 'Flash Player Debugger'
-JAVA = '/usr/bin/java'
-SIKULI_HOME = '/Applications/Sikuli-IDE.app/Contents/Resources/Java'
+FLASH_PLAYER = '{{ FLASH_PLAYER }}'
+JAVA = '{{ JAVA }}'
+SIKULI_HOME = '{{ SIKULI_HOME }}'
 SIKULI_SCRIPT = SIKULI_HOME + '/sikuli-script.jar'
 SIKULI_RUNNER = 'runner.sikuli'
 

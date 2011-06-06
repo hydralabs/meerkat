@@ -153,7 +153,8 @@ def build_runner(ctx):
     except OSError:
         pass
 
-    shutil.copy2(src.abspath(), dest.abspath())
+    generate(src, dest, **ctx.env.get_merged_dict())
+
 
 
 
