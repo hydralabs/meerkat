@@ -20,7 +20,7 @@ def open_swf():
     print 'Opening file:', full_path
     type("O", KEY_SHIFT + KEY_CMD)
     wait("flash_open_dialog.png")
-    paste(full_path)
+    type(full_path)
     type("\n")
 
 
