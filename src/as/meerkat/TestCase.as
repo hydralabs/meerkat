@@ -50,6 +50,8 @@ package meerkat
         {
             var nc:NetConnection = new NetConnection();
 
+            nc.objectEncoding = 0;
+
             // NetStatus
             nc.addEventListener(NetStatusEvent.NET_STATUS, function(event:NetStatusEvent):void
             {
