@@ -55,5 +55,6 @@ def build(ctx):
     buildmeta.build_fms_apps(ctx)
     buildmeta.build_python_server(ctx)
     buildmeta.build_runner(ctx)
+    buildmeta.build_proxy(ctx)
 
     buildmeta.write_test_file(ctx, buildmeta.get_tests(ctx))

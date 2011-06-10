@@ -157,6 +157,20 @@ def build_runner(ctx):
 
 
 
+def build_proxy(ctx):
+    """
+    Builds the Python test proxy.
+    """
+    src = ctx.path.find_node('src/proxy.py')
+    dest = ctx.path.find_or_declare('proxy.py')
+
+    try:
+        os.unlink(dest.abspath())
+    except OSError:
+        pass
+
+    generate(src, dest, **ctx.env.get_merged_dict())
+
 
 
 def build_fms_apps(ctx):
