@@ -156,7 +156,7 @@ def build_runner(ctx):
 
     context = ctx.env.get_merged_dict().copy()
 
-    context['LOCAL_SERVER'] = 'localhost:1935'
+    context['LOCAL_SERVER'] = 'localhost:23456'
     context['REMOTE_SERVER'] = ctx.env.SERVER_ROOT
 
     generate(src, dest, **context)
