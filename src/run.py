@@ -238,6 +238,8 @@ class ResultSet(object):
 
         for name, context in self.results.items():
             if context['status'] == 'success':
+                os.unlink('assets' + os.path.sep + name + '.carrays')
+
                 continue
 
             base_path = 'assets' + os.path.sep + name
