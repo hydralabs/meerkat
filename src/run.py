@@ -2,7 +2,7 @@
 """
 
 import subprocess
-import os
+import os.path
 import sys
 import time
 
@@ -17,13 +17,17 @@ SIKULI_SCRIPT = SIKULI_HOME + '/sikuli-script.jar'
 SIKULI_RUNNER = 'runner.sikuli'
 
 
+# proxy settings
+LOCAL_SERVER = '{{ LOCAL_SERVER }}'
+REMOTE_SERVER = '{{ REMOTE_SERVER }}'
+
+
 def run_py_server(**context):
     """
     Run a python server and return a handle to the subprocess
     """
     args = ['python/runner.py', context['module']]
-    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                         env=os.environ)
+    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     if p.poll() is not None:
         # we died
@@ -37,8 +41,21 @@ def run_swf(**context):
     Fire up the Sikuli runner
     """
     args = [JAVA, '-jar', SIKULI_SCRIPT, SIKULI_RUNNER, FLASH_PLAYER, context['file']]
-    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                         env=os.environ)
+    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    return p
+
+
+
+def run_proxy(file):
+    """
+    """
+    args = ['./proxy.py', LOCAL_SERVER, REMOTE_SERVER, file]
+    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    if p.poll() is not None:
+        # we died
+        raise RuntimeError('Proxy went boom')
 
     return p
 
@@ -60,6 +77,10 @@ class Result(object):
 
     def setClientPipes(self, pipes):
         self.client_pipes = pipes
+
+
+    def setProxyPipes(self, pipes):
+        self.proxy_pipes = pipes
 
 
     def finish(self):
@@ -124,6 +145,7 @@ class ResultSet(object):
         r['status'] = 'success'
         r['server_pipes'] = result.server_pipes
         r['client_pipes'] = result.client_pipes
+        r['proxy_pipes'] = result.proxy_pipes
 
         try:
             self.meta_results['successes'] += 1
@@ -139,6 +161,7 @@ class ResultSet(object):
         r['status'] = 'failure'
         r['server_pipes'] = result.server_pipes
         r['client_pipes'] = result.client_pipes
+        r['proxy_pipes'] = result.proxy_pipes
 
         try:
             self.meta_results['failures'] += 1
@@ -155,6 +178,7 @@ class ResultSet(object):
         r['status'] = 'error'
         r['server_pipes'] = result.server_pipes
         r['client_pipes'] = result.client_pipes
+        r['proxy_pipes'] = result.proxy_pipes
 
         try:
             self.meta_results['errors'] += 1
@@ -171,6 +195,7 @@ class ResultSet(object):
         r['status'] = 'error'
         r['server_pipes'] = result.server_pipes
         r['client_pipes'] = result.client_pipes
+        r['proxy_pipes'] = result.proxy_pipes
 
         try:
             self.meta_results['error'] += 1
@@ -187,6 +212,7 @@ class ResultSet(object):
         r['status'] = 'timeout'
         r['server_pipes'] = result.server_pipes
         r['client_pipes'] = result.client_pipes
+        r['proxy_pipes'] = result.proxy_pipes
 
         try:
             self.meta_results['timeout'] += 1
@@ -214,28 +240,34 @@ class ResultSet(object):
             if context['status'] == 'success':
                 continue
 
+            base_path = 'assets' + os.path.sep + name
             print '=' * 80
             print name, '- ' + context['status'].upper()
 
+            cp = context['proxy_pipes']
+
+
+            with open(base_path + '.proxy.stdout', 'w+') as o:
+                o.write('\n'.join(cp['stdout']))
+
+            with open(base_path + '.proxy.stderr', 'w+') as o:
+                o.write('\n'.join(cp['stderr']))
+
             cp = context['client_pipes']
 
-            print 'Client stdout:'
-            print '  ' + '\n  '.join(cp['stdout'])
-            print
+            with open(base_path + '.client.stdout', 'w+') as o:
+                o.write('\n'.join(cp['stdout']))
 
-            print 'Client stderr:'
-            print '  ' + '\n  '.join(cp['stderr'])
-            print
+            with open(base_path + '.client.stderr', 'w+') as o:
+                o.write('\n'.join(cp['stderr']))
 
             cp = context['server_pipes']
 
-            print 'Server stdout:'
-            print '  ' + '\n  '.join(cp['stdout'])
-            print
+            with open(base_path + '.server.stdout', 'w+') as o:
+                o.write('\n'.join(cp['stdout']))
 
-            print 'Server stderr:'
-            print '  ' + '\n  '.join(cp['stderr'])
-            print
+            with open(base_path + '.server.stderr', 'w+') as o:
+                o.write('\n'.join(cp['stderr']))
 
         print '-' * 80
         print 'Ran %d tests' % len(self.results)
@@ -272,6 +304,15 @@ run_client = globals()['run_' + client_type]
 
 ordered = sorted(tests.keys())
 
+try:
+    os.mkdir('assets')
+except:
+    import shutil
+    shutil.rmtree('assets')
+
+    os.mkdir('assets')
+
+
 for name in ordered:
     context = tests[name]
 
@@ -280,11 +321,13 @@ for name in ordered:
 
     test = results.start(name)
 
+    proxy_process = run_proxy('assets' + os.path.sep + name + '.carrays')
     server_process = run_server(**server_context)
     client_process = run_client(**client_context)
 
     client_process.wait()
     server_process.terminate()
+    proxy_process.terminate()
 
     client_pipes = {
         'stdout': client_process.stdout.read().strip().split('\n'),
@@ -296,10 +339,16 @@ for name in ordered:
         'stderr': server_process.stderr.read().strip().split('\n')
     }
 
+    proxy_pipes = {
+        'stdout': proxy_process.stdout.read().strip().split('\n'),
+        'stderr': proxy_process.stderr.read().strip().split('\n')
+    }
+
     result = get_sikuli_result(client_pipes['stdout'])
 
     test.setServerPipes(server_pipes)
     test.setClientPipes(client_pipes)
+    test.setProxyPipes(proxy_pipes)
 
     if result is None:
         test.unexpectedError()

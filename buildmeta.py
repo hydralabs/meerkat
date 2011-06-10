@@ -4,7 +4,7 @@
 import sys
 import os.path
 import shutil
-
+from urlparse import urlparse
 
 
 class TestContainer(dict):
@@ -100,6 +100,7 @@ def build_swf(ctx):
     rule = '${MXMLC} -source-path=%s -output ${TGT} ${SRC}'
 
     swf_suite = ctx.path.find_or_declare('swf/suite')
+    url = urlparse(ctx.env.SERVER_ROOT)
 
     for f in ctx.path.ant_glob('src/**/swf/main.as'):
         rel_path = f.abspath()[len(ctx.top_dir):].strip(os.path.sep)
@@ -113,7 +114,7 @@ def build_swf(ctx):
         lib = p.abspath()
 
         generate_meerkat_lib(ctx, p,
-            server_url=ctx.env.SERVER_ROOT + '_'.join(test_namespace))
+            server_url=url[0] + '://localhost' + url[2] + '_'.join(test_namespace))
 
         # foo_bar_baz.swf
         swf_name = '_'.join(test_namespace) + '.swf'
@@ -153,7 +154,13 @@ def build_runner(ctx):
     except OSError:
         pass
 
-    generate(src, dest, **ctx.env.get_merged_dict())
+    context = ctx.env.get_merged_dict().copy()
+
+    context['LOCAL_SERVER'] = 'localhost:1935'
+    context['REMOTE_SERVER'] = ctx.env.SERVER_ROOT
+
+    generate(src, dest, **context)
+    os.chmod(dest.abspath(), 0755)
 
 
 
@@ -170,6 +177,7 @@ def build_proxy(ctx):
         pass
 
     generate(src, dest, **ctx.env.get_merged_dict())
+    os.chmod(dest.abspath(), 0755)
 
 
 

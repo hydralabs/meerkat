@@ -32,6 +32,9 @@ def configure(ctx):
     ctx.env.SERVER_ROOT = ctx.options.server_root.rstrip('/') + '/'
     ctx.env.JAVA = ctx.find_program('java')
 
+    if 'localhost' in ctx.env.SERVER_ROOT:
+        ctx.fatal('Server root cannot be localhost (reserved for proxy)')
+
     if not ctx.env.SIKULI_HOME:
         ctx.env.SIKULI_HOME = buildmeta.get_sikuli_home(ctx)
         ctx.msg('Setting SIKULI_HOME', ctx.env.SIKULI_HOME)
