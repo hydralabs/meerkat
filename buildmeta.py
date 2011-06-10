@@ -97,7 +97,7 @@ def build_swf(ctx):
     A SWF test is defined as under src directory that have the format swf/main.as
     """
     tests = get_tests(ctx)
-    rule = '${MXMLC} -source-path=${MXMLC_LIB} -output ${TGT} ${SRC}'
+    rule = '${MXMLC} -source-path=%s -output ${TGT} ${SRC}'
 
     swf_suite = ctx.path.find_or_declare('swf/suite')
 
@@ -110,7 +110,7 @@ def build_swf(ctx):
         c = tests.add('swf', '_'.join(test_namespace))
 
         p = swf_suite.find_or_declare(os.path.join(*test_namespace))
-        ctx.env.MXMLC_LIB = p.abspath()
+        lib = p.abspath()
 
         generate_meerkat_lib(ctx, p,
             server_url=ctx.env.SERVER_ROOT + '_'.join(test_namespace))
@@ -119,7 +119,7 @@ def build_swf(ctx):
         swf_name = '_'.join(test_namespace) + '.swf'
         tgt = swf_suite.find_or_declare(swf_name)
 
-        ctx(rule=rule, source=f, target=tgt)
+        ctx(rule=rule % (lib,), source=f, target=tgt)
 
         c['file'] = tgt.bldpath()
 
