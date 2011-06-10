@@ -71,9 +71,9 @@ def get_test_result():
 
 
 
-open_swf()
 
 try:
+    open_swf()
     get_test_result()
 finally:
     type("q", KEY_CMD)
