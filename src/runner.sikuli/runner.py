@@ -19,7 +19,7 @@ wait(0.5)
 def open_swf():
     print 'Opening file:', full_path
     type("O", KEY_SHIFT + KEY_CMD)
-    wait(0.5)
+    wait("flash_open_dialog.png")
     paste(full_path)
     type("\n")
 
@@ -62,10 +62,10 @@ def onTimeout(event):
 def get_test_result():
     r = Region(0, 0, 400, 400)
 
-    r.onAppear(Pattern("failure.png"), onFailure)
-    r.onAppear(Pattern("success.png"), onSuccess)
-    r.onAppear(Pattern("error.png"), onError)
-    r.onAppear(Pattern("timeout.png"), onTimeout)
+    r.onAppear("failure.png", onFailure)
+    r.onAppear("success.png", onSuccess)
+    r.onAppear("error.png", onError)
+    r.onAppear("timeout.png", onTimeout)
 
     r.observe(test_timeout)
 
