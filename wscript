@@ -21,7 +21,9 @@ def options(ctx):
     ctx.add_option('--server_root', action='store', help='Server URL to connect to when running the suite. e.g. rtmp://10.1.1.5/. The path of the url is set automatically at build time.')
     ctx.add_option('--logging', action='store', default='', help='Logging URL to use when sending logging info')
     ctx.add_option('--flash_player', action='store', default='', help='Full path to the Standalone Flash Player')
-    ctx.add_option('--scp_arg', action='store', help='scp username@host:/root arg used to deploy FMS apps (used only if target_server=="fms"')
+    ctx.add_option('--fms_user', action='store', help='Username used by SCP to connect to FMS host server')
+    ctx.add_option('--fms_host', action='store', help='Host used by SCP to connect to FMS host server')
+    ctx.add_option('--fms_dir', action='store', help='Absolute path to the applications directory for that')
 
 
 
@@ -76,18 +78,33 @@ def configure(ctx):
     ctx.env.SERVER_ROOT = ctx.options.server_root.rstrip('/') + '/'
 
     if target_server == 'fms':
+        fms_user = ctx.options.fms_user
+
+        if not fms_user:
+            ctx.fatal('FMS User required, supply --fms_user')
+
+        fms_host = ctx.options.fms_host
+
+        if not fms_host:
+            ctx.fatal('FMS Host required, supply --fms_host')
+
+        fms_dir = ctx.options.fms_dir.strip('/')
+
+        if not fms_dir:
+            ctx.fatal('FMS application directory required, supply --fms_dir')
+
         ctx.env.SCP = ctx.find_program('scp')
+        ctx.env.SSH = ctx.find_program('ssh')
 
-        scp_arg = ctx.options.scp_arg
-
-        if not scp_arg:
-            ctx.fatal('FMS SCP arg required for app deployment, supply --scp_arg')
+        scp_arg = '%s@%s:%s' % (fms_user, fms_host, fms_dir)
 
         ctx.msg('Will deploy FMS apps to', scp_arg)
 
-        ctx.env.SCP_ARG = scp_arg
+        ctx.env.FMS_USER = fms_user
+        ctx.env.FMS_HOST = fms_host
+        ctx.env.FMS_DIR = fms_dir
 
-
+        assert ctx.env.FMS_DIR.startswith('/opt/adobe/fms')
         
 
 def build(ctx):
