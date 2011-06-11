@@ -267,13 +267,11 @@ def deploy_fms_apps(ctx):
     """
     """
     tests = get_tests(ctx)
-    task1 = ctx('${SSH} %s@%s "rm -rf %s/*"' % (ctx.env.FMS_USER, ctx.env.FMS_HOST, ctx.env.FMS_DIR))
-    rule = '${SCP} -r %%s %s@%s:%s' % (ctx.env.FMS_USER, ctx.env.FMS_HOST, ctx.env.FMS_DIR)
+    rule = '${SSH} ${FMS_USER}@${FMS_HOST} "rm -rf ${FMS_DIR}/%s;${SCP} -r %s ${FMS_USER}@${FMS_HOST}:${FMS_DIR}'
 
     fms_build = ctx.path.find_or_declare('fms')
 
     for name, context in tests.iteritems():
         app_dir = fms_build.find_or_declare(name).abspath()
 
-        t = ctx(rule=rule % app_dir)
-        t.set_run_after(task1)
+        ctx(rule=rule % (name, app_dir))
