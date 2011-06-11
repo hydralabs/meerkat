@@ -36,9 +36,7 @@ def run_fms(**context):
     """
     Unload the app that is about to be tested
     """
-    url = ('http://%(FMS_HOST)s:1111/admin/restartVHost?auser=%(FMS_USER)s&apswd=%(FMS_PASSWD)s&vhost=%(FMS_HOST)s&appInst=' % globals())
-
-    url += context['app_name']
+    url = ('http://%(FMS_HOST)s:1111/admin/restartVHost?auser=%(FMS_USER)s&apswd=%(FMS_PASSWD)s&vhost=%(FMS_HOST)s' % globals())
 
     print 'Connecting to: ', url
 
