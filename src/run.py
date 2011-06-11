@@ -305,6 +305,7 @@ for name in ordered:
     client_process.wait()
     server_process.terminate()
     proxy_process.send_signal(signal.SIGINT)
+    proxy_process.wait()
 
     client_pipes = {
         'stdout': client_process.stdout.read().strip().split('\n'),

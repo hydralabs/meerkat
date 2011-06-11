@@ -260,3 +260,15 @@ def build_python_server(ctx):
         shutil.copy2(f.abspath(), app_node.abspath())
         c['file'] = app_node.nice_path()
         c['module'] = module
+
+
+
+def deploy_fms_apps(ctx):
+    """
+    """
+    print ctx.env.SCP_ARG, ctx.env.SCP
+    tests = get_tests(ctx)
+    rule = '${SCP} -r %s ${SCP_ARG}'
+
+    for name, context in tests.iteritems():
+        ctx(rule=rule % context['fms']['app'])
