@@ -40,11 +40,14 @@ def run_fms(**context):
 
     url += context['app_name']
 
+    print 'Connecting to: ', url
+
     import urllib2
 
     r = urllib2.urlopen(url)
 
     response = r.read()
+    print 'Got response', response
 
     assert 'NetConnection.Call.Success' in response
 
