@@ -38,14 +38,11 @@ def run_fms(**context):
     """
     url = ('http://%(FMS_HOST)s:1111/admin/restartVHost?auser=%(FMS_USER)s&apswd=%(FMS_PASSWD)s&vhost=%(FMS_HOST)s' % globals())
 
-    print 'Connecting to: ', url
-
     import urllib2
 
     r = urllib2.urlopen(url)
 
     response = r.read()
-    print 'Got response', response
 
     assert 'NetConnection.Call.Success' in response
 
@@ -349,8 +346,7 @@ for name in ordered:
 
     client_process.wait()
     server_process.terminate()
-    proxy_process.send_signal(signal.SIGINT)
-    proxy_process.wait()
+    proxy_process.terminate()
 
     client_pipes = {
         'stdout': client_process.stdout.read().strip().split('\n'),
