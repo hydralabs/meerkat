@@ -88,7 +88,7 @@ def configure(ctx):
         if not fms_host:
             ctx.fatal('FMS Host required, supply --fms_host')
 
-        fms_dir = ctx.options.fms_dir.strip('/')
+        fms_dir = ctx.options.fms_dir.rstrip('/')
 
         if not fms_dir:
             ctx.fatal('FMS application directory required, supply --fms_dir')
