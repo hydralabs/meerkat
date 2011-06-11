@@ -274,4 +274,6 @@ def deploy_fms_apps(ctx):
     for name, context in tests.iteritems():
         app_dir = fms_build.find_or_declare(name).abspath()
 
+        print 'rule -->', rule % (name, app_dir)
+
         ctx(rule=rule % (name, app_dir))
