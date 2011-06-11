@@ -266,9 +266,12 @@ def build_python_server(ctx):
 def deploy_fms_apps(ctx):
     """
     """
-    print ctx.env.SCP_ARG, ctx.env.SCP
     tests = get_tests(ctx)
     rule = '${SCP} -r %s ${SCP_ARG}'
 
+    fms_build = ctx.path.find_or_declare('fms')
+
     for name, context in tests.iteritems():
-        ctx(rule=rule % context['fms']['app'])
+        app_dir = fms_build.find_or_declare(name).nice_path()
+
+        ctx(rule=rule % app_dir)
