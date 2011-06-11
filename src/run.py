@@ -6,6 +6,7 @@ import signal
 import os.path
 import sys
 import time
+import shutil
 
 
 from tests import tests
@@ -284,7 +285,6 @@ ordered = sorted(tests.keys())
 try:
     os.mkdir(OUTPUT_DIR)
 except:
-    import shutil
     shutil.rmtree(OUTPUT_DIR)
 
     os.mkdir(OUTPUT_DIR)
