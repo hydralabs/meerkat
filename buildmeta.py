@@ -269,6 +269,8 @@ def deploy_fms_apps(ctx):
     tests = get_tests(ctx)
     rule = '${SSH} ${FMS_USER}@${FMS_HOST} "rm -rf ${FMS_DIR}/%s;${SCP} -r %s ${FMS_USER}@${FMS_HOST}:${FMS_DIR}'
 
+    print ctx.env.get_merged_dict()
+
     fms_build = ctx.path.find_or_declare('fms')
 
     for name, context in tests.iteritems():
