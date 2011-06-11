@@ -267,11 +267,19 @@ def deploy_fms_apps(ctx):
     """
     """
     tests = get_tests(ctx)
-    rule = '${SSH} ${FMS_USER}@${FMS_HOST} "rm -rf ${FMS_DIR}/%s;${SCP} -r %s ${FMS_USER}@${FMS_HOST}:${FMS_DIR}'
+    context = ctx.env.get_merged_dict().copy()
 
+    fms_deploy = ctx.path.find_or_declare('fms-deploy')
     fms_build = ctx.path.find_or_declare('fms')
 
-    for name, context in tests.iteritems():
-        app_dir = fms_build.find_or_declare(name)
+    lines = []
 
-        ctx(rule=rule % (name, app_dir.abspath()), source=app_dir, target=name)
+    for name in tests:
+        app_dir = fms_build.find_or_declare(name)
+        c = context.copy()
+        c.update({'APP_NAME': name, 'APP_DIR': app_dir.abspath()})
+
+        lines.append('%(SSH)s %(FMS_USER)s@%(FMS_HOST)s "rm -rf %(FMS_DIR)s/%(APP_NAME)s"' % c)
+        lines.append('%(SCP)s -r %(APP_DIR)s %(FMS_USER)s@%(FMS_HOST)s:%(FMS_DIR)s' % c)
+
+    fms_deploy.write('\n'.join(lines) + '\n', 'w+')
