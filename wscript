@@ -104,6 +104,10 @@ def configure(ctx):
         ctx.env.FMS_HOST = fms_host
         ctx.env.FMS_DIR = fms_dir
 
+        ctx.msg('Setting FMS_USER', ctx.env.FMS_USER)
+        ctx.msg('Setting FMS_HOST', ctx.env.FMS_HOST)
+        ctx.msg('Setting FMS_DIR', ctx.env.FMS_DIR)
+
         assert ctx.env.FMS_DIR.startswith('/opt/adobe/fms')
         
 
