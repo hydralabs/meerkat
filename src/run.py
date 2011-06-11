@@ -38,14 +38,14 @@ def run_fms(**context):
     """
     url = ('http://%(FMS_HOST)s:1111/admin/restartVHost?auser=%(FMS_USER)s&apswd=%(FMS_PASSWD)s&vhost=%(FMS_HOST)s' % globals())
 
-    print 'Connecting to: ', url
+    #print 'Connecting to: ', url
 
     import urllib2
 
     r = urllib2.urlopen(url)
 
     response = r.read()
-    print 'Got response', response
+    #print 'Got response', response
 
     assert 'NetConnection.Call.Success' in response
 
