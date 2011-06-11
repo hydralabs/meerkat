@@ -22,6 +22,7 @@ def options(ctx):
     ctx.add_option('--logging', action='store', default='', help='Logging URL to use when sending logging info')
     ctx.add_option('--flash_player', action='store', default='', help='Full path to the Standalone Flash Player')
     ctx.add_option('--fms_user', action='store', help='Username used by SCP to connect to FMS host server')
+    ctx.add_option('--fms_passwd', action='store', help='Password used by FMS Admin too to reload the vhost for this test run')
     ctx.add_option('--fms_host', action='store', help='Host used by SCP to connect to FMS host server')
     ctx.add_option('--fms_dir', action='store', help='Absolute path to the applications directory for that')
 
@@ -93,6 +94,11 @@ def configure(ctx):
         if not fms_dir:
             ctx.fatal('FMS application directory required, supply --fms_dir')
 
+        fms_passwd = ctx.options.fms_passwd
+
+        if not fms_passwd:
+            ctx.fatal('FMS Passwd required, supply --fms_passwd')
+
         ctx.env.SCP = ctx.find_program('scp')
         ctx.env.SSH = ctx.find_program('ssh')
 
@@ -101,10 +107,12 @@ def configure(ctx):
         ctx.msg('Will deploy FMS apps to', scp_arg)
 
         ctx.env.FMS_USER = fms_user
+        ctx.env.FMS_PASSWD = fms_passwd
         ctx.env.FMS_HOST = fms_host
         ctx.env.FMS_DIR = fms_dir
 
         ctx.msg('Setting FMS_USER', ctx.env.FMS_USER)
+        ctx.msg('Setting FMS_PASSWD', ctx.env.FMS_PASSWD)
         ctx.msg('Setting FMS_HOST', ctx.env.FMS_HOST)
         ctx.msg('Setting FMS_DIR', ctx.env.FMS_DIR)
 

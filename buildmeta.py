@@ -211,6 +211,7 @@ def build_fms_apps(ctx):
 
         shutil.copytree(app_src_dir.abspath(), app_node.abspath())
         c['app'] = app_node.nice_path()
+        c['app_name'] = '_'.join(swf_namespace)
 
 
 

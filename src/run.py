@@ -26,6 +26,49 @@ REMOTE_SERVER = '{{ REMOTE_SERVER }}'
 OUTPUT_DIR = 'output'
 
 
+# fms
+FMS_HOST = '{{ FMS_HOST }}'
+FMS_USER = '{{ FMS_USER }}'
+FMS_PASSWD = '{{ FMS_PASSWD }}'
+
+
+def run_fms(**context):
+    """
+    Unload the app that is about to be tested
+    """
+    url = ('http://%(FMS_HOST)s:1111/admin/restartVHost?auser=%(FMS_USER)s&apswd=%(FMS_PASSWD)s&vhost=%(FMS_HOST)s&appInst=' % globals())
+
+    url += context['app_name']
+
+    import urllib2
+
+    r = urllib2.urlopen(url)
+
+    response = r.read()
+
+    assert 'NetConnection.Call.Success' in response
+
+    class EmptyStream(object):
+        def read(self):
+            return ''
+
+
+    class MyPOpen(object):
+        """
+        Pretend to act like a subprocess.POpen instance
+        """
+
+        stdout = EmptyStream()
+        stderr = EmptyStream()
+
+        def terminate(self):
+            pass
+
+
+    return MyPOpen()
+
+    
+
 def run_py_server(**context):
     """
     Run a python server and return a handle to the subprocess
@@ -38,6 +81,7 @@ def run_py_server(**context):
         raise RuntimeError('Stuff went boom')
 
     return p
+
 
 
 def run_swf(**context):
