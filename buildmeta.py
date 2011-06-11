@@ -114,7 +114,7 @@ def build_swf(ctx):
         lib = p.abspath()
 
         generate_meerkat_lib(ctx, p,
-            server_url=url[0] + '://localhost' + url[2] + '_'.join(test_namespace))
+            server_url=url[0] + '://localhost:23456' + url[2] + '_'.join(test_namespace))
 
         # foo_bar_baz.swf
         swf_name = '_'.join(test_namespace) + '.swf'

@@ -2,6 +2,7 @@
 """
 
 import subprocess
+import signal
 import os.path
 import sys
 import time
@@ -20,6 +21,8 @@ SIKULI_RUNNER = 'runner.sikuli'
 # proxy settings
 LOCAL_SERVER = '{{ LOCAL_SERVER }}'
 REMOTE_SERVER = '{{ REMOTE_SERVER }}'
+
+OUTPUT_DIR = 'output'
 
 
 def run_py_server(**context):
@@ -116,18 +119,20 @@ class ResultSet(object):
     """
     """
 
+    verbose = False
+    passed = True
 
     def __init__(self):
         self.results = {}
         self.meta_results = {}
         self._currentResult = None
-        self.passed = True
 
 
     def start(self, name):
         if self._currentResult is not None:
             raise RuntimeError('Test %r is still running' % (self._currentResult,))
 
+        os.mkdir(os.path.join(OUTPUT_DIR, name))
         self._currentResult = name
         context = self.results[name] = {}
         r = Result(self, name, context)
@@ -139,87 +144,87 @@ class ResultSet(object):
         return r
 
 
-    def addSuccess(self, result):
+    def recordResult(self, name, result):
+        """
+        """
+        base_path = os.path.join(OUTPUT_DIR, name, '')
+
+        cp = result['proxy_pipes']
+
+        with open(base_path + 'proxy.stdout', 'w+') as o:
+            o.write('\n'.join(cp['stdout']))
+
+        with open(base_path + 'proxy.stderr', 'w+') as o:
+            o.write('\n'.join(cp['stderr']))
+
+        cp = result['client_pipes']
+
+        with open(base_path + 'client.stdout', 'w+') as o:
+            o.write('\n'.join(cp['stdout']))
+
+        with open(base_path + 'client.stderr', 'w+') as o:
+            o.write('\n'.join(cp['stderr']))
+
+        cp = result['server_pipes']
+
+        with open(base_path + 'server.stdout', 'w+') as o:
+            o.write('\n'.join(cp['stdout']))
+
+        with open(base_path + 'server.stderr', 'w+') as o:
+            o.write('\n'.join(cp['stderr']))
+
+
+    def _setStatus(self, status, meta_result, result):
+        """
+        """
         r = self.results[self._currentResult]
 
-        r['status'] = 'success'
-        r['server_pipes'] = result.server_pipes
-        r['client_pipes'] = result.client_pipes
+        r['status'] = status
         r['proxy_pipes'] = result.proxy_pipes
+        r['client_pipes'] = result.client_pipes
+        r['server_pipes'] = result.server_pipes
 
         try:
-            self.meta_results['successes'] += 1
+            self.meta_results[meta_result] += 1
         except KeyError:
-            self.meta_results['successes'] = 1
+            self.meta_results[meta_result] = 1
+
+
+    def addSuccess(self, result):
+        self._setStatus('success', 'successes', result)
 
         print 'PASS'
 
 
     def addFailure(self, result):
-        r = self.results[self._currentResult]
-
-        r['status'] = 'failure'
-        r['server_pipes'] = result.server_pipes
-        r['client_pipes'] = result.client_pipes
-        r['proxy_pipes'] = result.proxy_pipes
-
-        try:
-            self.meta_results['failures'] += 1
-        except KeyError:
-            self.meta_results['failures'] = 1
-
         self.passed = False
+
+        self._setStatus('failure', 'failures', result)
+
         print 'FAIL'
 
 
     def addError(self, result):
-        r = self.results[self._currentResult]
-
-        r['status'] = 'error'
-        r['server_pipes'] = result.server_pipes
-        r['client_pipes'] = result.client_pipes
-        r['proxy_pipes'] = result.proxy_pipes
-
-        try:
-            self.meta_results['errors'] += 1
-        except KeyError:
-            self.meta_results['errors'] = 1
-
         self.passed = False
+
+        self._setStatus('error', 'errors', result)
+
         print 'ERROR'
 
 
     def addUnexpectedError(self, result):
-        r = self.results[self._currentResult]
-
-        r['status'] = 'error'
-        r['server_pipes'] = result.server_pipes
-        r['client_pipes'] = result.client_pipes
-        r['proxy_pipes'] = result.proxy_pipes
-
-        try:
-            self.meta_results['error'] += 1
-        except KeyError:
-            self.meta_results['error'] = 1
-
         self.passed = False
+
+        self._setStatus('error', 'errors', result)
+
         print 'ERROR?!'
 
 
     def addTimeout(self, result):
-        r = self.results[self._currentResult]
-
-        r['status'] = 'timeout'
-        r['server_pipes'] = result.server_pipes
-        r['client_pipes'] = result.client_pipes
-        r['proxy_pipes'] = result.proxy_pipes
-
-        try:
-            self.meta_results['timeout'] += 1
-        except KeyError:
-            self.meta_results['timeout'] = 1
-
         self.passed = False
+
+        self._setStatus('timeout', 'timeouts', result)
+
         print 'TIMEOUT'
 
 
@@ -230,48 +235,18 @@ class ResultSet(object):
 
         r['finish'] = time.time()
 
+        if r['status'] == 'success' and not self.verbose:
+            shutil.rmtree(os.path.join(OUTPUT_DIR, name))
+        else:
+            self.recordResult(self._currentResult, r)
+
         self._currentResult = None
 
 
     def report(self):
         print
 
-        for name, context in self.results.items():
-            if context['status'] == 'success':
-                os.unlink('assets' + os.path.sep + name + '.carrays')
-
-                continue
-
-            base_path = 'assets' + os.path.sep + name
-            print '=' * 80
-            print name, '- ' + context['status'].upper()
-
-            cp = context['proxy_pipes']
-
-
-            with open(base_path + '.proxy.stdout', 'w+') as o:
-                o.write('\n'.join(cp['stdout']))
-
-            with open(base_path + '.proxy.stderr', 'w+') as o:
-                o.write('\n'.join(cp['stderr']))
-
-            cp = context['client_pipes']
-
-            with open(base_path + '.client.stdout', 'w+') as o:
-                o.write('\n'.join(cp['stdout']))
-
-            with open(base_path + '.client.stderr', 'w+') as o:
-                o.write('\n'.join(cp['stderr']))
-
-            cp = context['server_pipes']
-
-            with open(base_path + '.server.stdout', 'w+') as o:
-                o.write('\n'.join(cp['stdout']))
-
-            with open(base_path + '.server.stderr', 'w+') as o:
-                o.write('\n'.join(cp['stderr']))
-
-        print '-' * 80
+        print '=' * 80
         print 'Ran %d tests' % len(self.results)
         print
 
@@ -307,12 +282,12 @@ run_client = globals()['run_' + client_type]
 ordered = sorted(tests.keys())
 
 try:
-    os.mkdir('assets')
+    os.mkdir(OUTPUT_DIR)
 except:
     import shutil
-    shutil.rmtree('assets')
+    shutil.rmtree(OUTPUT_DIR)
 
-    os.mkdir('assets')
+    os.mkdir(OUTPUT_DIR)
 
 
 for name in ordered:
@@ -323,13 +298,13 @@ for name in ordered:
 
     test = results.start(name)
 
-    proxy_process = run_proxy('assets' + os.path.sep + name + '.carrays')
+    proxy_process = run_proxy(os.path.join(OUTPUT_DIR, name, name + '.carrays'))
     server_process = run_server(**server_context)
     client_process = run_client(**client_context)
 
     client_process.wait()
     server_process.terminate()
-    proxy_process.terminate()
+    proxy_process.send_signal(signal.SIGINT)
 
     client_pipes = {
         'stdout': client_process.stdout.read().strip().split('\n'),
