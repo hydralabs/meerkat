@@ -283,3 +283,4 @@ def deploy_fms_apps(ctx):
         lines.append('%(SCP)s -r %(APP_DIR)s %(FMS_USER)s@%(FMS_HOST)s:%(FMS_DIR)s' % c)
 
     fms_deploy.write('\n'.join(lines) + '\n', 'w+')
+    os.chmod(fms_deploy.abspath(), 0755)
