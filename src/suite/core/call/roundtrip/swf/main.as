@@ -37,16 +37,17 @@ package {
 
             client.client_method = function(... args):String
             {
-                if (args != [1, 2, 3])
+                if (args[0] == 1 && args[1] ==  2 && args[2] == 3)
                 {
-                    this.failure('Unexpected args from server ' + args);
-
-                    return null;
+                    this.success();
+                    return 'ok';
                 }
 
-                return 'ok';
-            };
+                this.failure('Unexpected args from server ' + args);
 
+                return null;
+
+            };
 
             this.nc.client = client;
             this.nc.connect(this.serverUrl)
