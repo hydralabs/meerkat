@@ -58,7 +58,7 @@ package meerkat
                 trace( "onNetStatus: " + event);
             });
 
-            nc.addEventListener(NetStatusEvent.NET_STATUS, this.onNetStatus);
+            nc.addEventListener(NetStatusEvent.NET_STATUS, this._onNetStatus);
 
             // Security
             nc.addEventListener(SecurityErrorEvent.SECURITY_ERROR, function(event:SecurityErrorEvent):void
@@ -87,6 +87,30 @@ package meerkat
             return nc;
         }
 
+        public function onDisconnect():void
+        {
+            if (this.status == 'success')
+            {
+                this._drawRect(0x00FF00);
+                this._writeText('SUCCESS');
+
+                return;
+            }
+
+            this.failure();
+        }
+
+        private function _onNetStatus(event:NetStatusEvent):void
+        {
+            if (event.info.code == "NetConnection.Connect.Closed")
+            {
+                this.onDisconnect();
+
+                return;
+            }
+
+            this.onNetStatus(event);
+        }
 
         public function onNetStatus(event:NetStatusEvent):void
         {
@@ -127,8 +151,6 @@ package meerkat
             }
             */
 
-            this._drawRect(0x00FF00);
-            this._writeText('SUCCESS');
             this.status = 'success';
         }
 

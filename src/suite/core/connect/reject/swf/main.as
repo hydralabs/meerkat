@@ -11,8 +11,6 @@ package {
 
     public class main extends TestCase
     {
-        private var rejected:Boolean = false;
-
         public override function run():void
         {
             this.nc.connect(this.serverUrl)
@@ -22,14 +20,7 @@ package {
         {
             if (event.info.code == "NetConnection.Connect.Rejected")
             {
-                this.rejected = true;
-
-                return;
-            }
-
-            if (event.info.code == "NetConnection.Connect.Closed")
-            {
-                this.success()
+                this.success();
 
                 return;
             }
