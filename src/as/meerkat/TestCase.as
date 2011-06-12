@@ -135,7 +135,7 @@ package meerkat
         /**
          * Called to indicate a failed test run.
          */
-        public function failure():void
+        public function failure(msg:String=null):void
         {
             if (this.status != 'pending')
             {
