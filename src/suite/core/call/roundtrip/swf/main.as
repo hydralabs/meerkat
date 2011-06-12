@@ -62,7 +62,7 @@ package {
 
             var r:Responder = new Responder(client_onResult, client_onStatus);
 
-            this.nc.call('known_method', r, 'foo', 'bar', ['baz']);
+            this.nc.call('known_method', r, 'foo', 'bar');
         }
     }
 }
