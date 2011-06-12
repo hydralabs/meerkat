@@ -34,16 +34,17 @@ package {
         public override function run():void
         {
             var client:Object = new Object();
+            var tc:* = this;
 
             client.client_method = function(... args):String
             {
                 if (args[0] == 1 && args[1] ==  2 && args[2] == 3)
                 {
-                    this.success();
+                    tc.success();
                     return 'ok';
                 }
 
-                this.failure('Unexpected args from server ' + args);
+                tc.failure('Unexpected args from server ' + args);
 
                 return null;
 
