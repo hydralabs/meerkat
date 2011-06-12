@@ -330,6 +330,20 @@ run_client = globals()['run_' + client_type]
 
 ordered = sorted(tests.keys())
 
+
+tests_to_run = sys.argv[3:]
+
+if not tests_to_run:
+    tests_to_run = ordered
+else:
+    t = []
+
+    for i in tests_to_run:
+        if i in ordered:
+            t.append(i)
+
+    tests_to_run = t
+
 try:
     os.mkdir(OUTPUT_DIR)
 except:
@@ -338,7 +352,7 @@ except:
     os.mkdir(OUTPUT_DIR)
 
 
-for name in ordered:
+for name in tests_to_run:
     context = tests[name]
 
     server_context = context[server_type]
