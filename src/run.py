@@ -38,13 +38,19 @@ def run_fms(**context):
     """
     url = ('http://%(FMS_HOST)s:1111/admin/restartVHost?auser=%(FMS_USER)s&apswd=%(FMS_PASSWD)s&vhost=%(FMS_HOST)s' % globals())
 
+    # TODO: Fix this hack in FMS
+    url2 = ('http://%(FMS_HOST)s:1111/admin/restartVHost?auser=%(FMS_USER)s&apswd=%(FMS_PASSWD)s&vhost=localhost' % globals())
+
     import urllib2
 
     r = urllib2.urlopen(url)
+    r2 = urllib2.urlopen(url2)
 
     response = r.read()
+    response2 = r2.read()
 
     assert 'NetConnection.Call.Success' in response
+    assert 'NetConnection.Call.Success' in response2
 
     class EmptyStream(object):
         def read(self):
