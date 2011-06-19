@@ -70,6 +70,14 @@ def configure(ctx):
 
 def build(ctx):
     """
+    """
+    build_apps(ctx)
+    deploy_fms_apps(ctx)
+
+
+
+def build_apps(ctx):
+    """
     Copies all src/test/suite/name/fms/* to build/fms/test_suite_name/*
 
     The contents in build/fms can then be dropped into an FMS install and
@@ -103,13 +111,10 @@ def build(ctx):
 
 
 
-
-
-
 def deploy_fms_apps(ctx):
     """
     """
-    tests = get_tests(ctx)
+    tests = buildmeta.get_tests(ctx)
     context = ctx.env.get_merged_dict().copy()
 
     fms_deploy = ctx.path.find_or_declare('fms-deploy')
