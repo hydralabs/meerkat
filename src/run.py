@@ -1,8 +1,11 @@
 """
+Run a server and client target that has been built by waf. Acts like a standard
+Python test runner.
+
+Exit status of non zero if the test run did not pass.
 """
 
 import subprocess
-import signal
 import os.path
 import sys
 import time
@@ -11,6 +14,9 @@ import shutil
 
 from tests import tests
 
+
+CLIENT_TARGET = '{{ CLIENT_TARGET }}'
+SERVER_TARGET = '{{ SERVER_TARGET }}'
 
 FLASH_PLAYER = '{{ FLASH_PLAYER }}'
 JAVA = '{{ JAVA }}'
@@ -317,88 +323,89 @@ def get_sikuli_result(stdout):
             return l.rsplit('RESULT: ')[-1].strip()
 
 
-# main program execution here
 
-results = ResultSet()
+def run(*test_labels):
+    results = ResultSet()
 
-server_type = sys.argv[1]
-client_type = sys.argv[2]
+    run_server = globals()['run_' + SERVER_TARGET]
+    run_client = globals()['run_' + CLIENT_TARGET]
 
+    ordered = sorted(tests.keys())
 
-run_server = globals()['run_' + server_type]
-run_client = globals()['run_' + client_type]
+    tests_to_run = test_labels
 
-ordered = sorted(tests.keys())
-
-
-tests_to_run = sys.argv[3:]
-
-if not tests_to_run:
-    tests_to_run = ordered
-else:
-    t = []
-
-    for i in tests_to_run:
-        if i in ordered:
-            t.append(i)
-
-    tests_to_run = t
-
-try:
-    os.mkdir(OUTPUT_DIR)
-except:
-    shutil.rmtree(OUTPUT_DIR)
-
-    os.mkdir(OUTPUT_DIR)
-
-
-for name in tests_to_run:
-    context = tests[name]
-
-    server_context = context[server_type]
-    client_context = context[client_type]
-
-    test = results.start(name)
-
-    proxy_process = run_proxy(os.path.join(OUTPUT_DIR, name, name + '.carrays'))
-    server_process = run_server(**server_context)
-    client_process = run_client(**client_context)
-
-    client_process.wait()
-    server_process.terminate()
-    proxy_process.terminate()
-
-    client_pipes = {
-        'stdout': client_process.stdout.read().strip().split('\n'),
-        'stderr': client_process.stderr.read().strip().split('\n')
-    }
-
-    server_pipes = {
-        'stdout': server_process.stdout.read().strip().split('\n'),
-        'stderr': server_process.stderr.read().strip().split('\n')
-    }
-
-    proxy_pipes = {
-        'stdout': proxy_process.stdout.read().strip().split('\n'),
-        'stderr': proxy_process.stderr.read().strip().split('\n')
-    }
-
-    result = get_sikuli_result(client_pipes['stdout'])
-
-    test.setServerPipes(server_pipes)
-    test.setClientPipes(client_pipes)
-    test.setProxyPipes(proxy_pipes)
-
-    if result is None:
-        test.unexpectedError()
+    if not tests_to_run:
+        tests_to_run = ordered
     else:
-        # call the correct method on the test object
-        getattr(test, result)()
+        t = []
 
-    test.finish()
+        for i in tests_to_run:
+            if i in ordered:
+                t.append(i)
+
+        tests_to_run = t
+
+    try:
+        os.mkdir(OUTPUT_DIR)
+    except:
+        shutil.rmtree(OUTPUT_DIR)
+
+        os.mkdir(OUTPUT_DIR)
 
 
-results.report()
+    for name in tests_to_run:
+        context = tests[name]
 
-if not results.passed:
-    sys.exit(1)
+        server_context = context[SERVER_TARGET]
+        client_context = context[CLIENT_TARGET]
+
+        test = results.start(name)
+
+        proxy_process = run_proxy(os.path.join(OUTPUT_DIR, name, name + '.carrays'))
+        server_process = run_server(**server_context)
+        client_process = run_client(**client_context)
+
+        client_process.wait()
+        server_process.terminate()
+        proxy_process.terminate()
+
+        client_pipes = {
+            'stdout': client_process.stdout.read().strip().split('\n'),
+            'stderr': client_process.stderr.read().strip().split('\n')
+        }
+
+        server_pipes = {
+            'stdout': server_process.stdout.read().strip().split('\n'),
+            'stderr': server_process.stderr.read().strip().split('\n')
+        }
+
+        proxy_pipes = {
+            'stdout': proxy_process.stdout.read().strip().split('\n'),
+            'stderr': proxy_process.stderr.read().strip().split('\n')
+        }
+
+        result = get_sikuli_result(client_pipes['stdout'])
+
+        test.setServerPipes(server_pipes)
+        test.setClientPipes(client_pipes)
+        test.setProxyPipes(proxy_pipes)
+
+        if result is None:
+            test.unexpectedError()
+        else:
+            # call the correct method on the test object
+            getattr(test, result)()
+
+        test.finish()
+
+    return results
+
+
+
+if __name__ == '__main__':
+    results = run(*sys.argv[1:])
+
+    results.report()
+
+    if not results.passed:
+        raise SystemExit(1)

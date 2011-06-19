@@ -11,12 +11,16 @@ import buildmeta
 def options(ctx):
     """
     """
+    gr = ctx.add_option_group('Server target `py_server`',
+        'Options for testing with RTMPy acting as a server.')
 
 
 
 def configure(ctx):
     """
     """
+    ctx.load('python')
+    ctx.check_python_module('rtmpy')
 
 
 
@@ -26,7 +30,6 @@ def build(ctx):
     """
     build_runner(ctx)
     build_apps(ctx)
-
 
 
 
@@ -52,7 +55,11 @@ def build_apps(ctx):
         except OSError:
             pass
 
-        shutil.copy2(f.abspath(), app_node.abspath())
+        try:
+            shutil.copy2(f.abspath(), app_node.abspath())
+        except OSError:
+            ctx.fatal('Unable to copy python server app %r (path:%r)' % (
+                module, app_node.bldpath()))
 
         c['file'] = app_node.bldpath()
         c['module'] = module
@@ -71,6 +78,13 @@ def build_runner(ctx):
     except OSError:
         pass
 
-    shutil.copy2(src.abspath(), dest.abspath())
+    try:
+        shutil.copy2(src.abspath(), dest.abspath())
+    except OSError:
+        ctx.fatal('Unable to copy python runner to %r' % (dest.bldpath(),))
 
-    os.chmod(dest.abspath(), 0755)
+    try:
+        os.chmod(dest.abspath(), 0755)
+    except OSError:
+        ctx.fatal('Unable to create executable python runner at %r' % (
+            dest.bldpath(),))

@@ -4,7 +4,6 @@ All code for options/configure/build for SWF target
 
 import sys
 import os.path
-from urlparse import urlparse
 import shutil
 
 

@@ -14,15 +14,18 @@ PROTOCOLS = ('rtmp',)
 
 
 def options(ctx):
-    ctx.add_option('--server_targets', action='store',
-        help=('A comma separated list of which server components to build (and '
-            'test). Choose from %r' % (SERVER_TARGETS,)))
-    ctx.add_option('--client_targets', action='store',
-        help=('A comma separated list of which client components to build (and '
-            'test). Choose from %r' % (CLIENT_TARGETS,)))
+    ctx.add_option('--server', action='store',
+        help='A server component to build (and test). Choose one from %r' % (
+            SERVER_TARGETS,))
+    ctx.add_option('--client', action='store',
+        help='A client component to build (and test). Choose one from %r' % (
+            CLIENT_TARGETS,))
 
     ctx.add_option('--protocol', action='store', default='rtmp',
         help='Protocol to test. Choose ONE from %r.' % (PROTOCOLS,))
+
+    ctx.add_option('--remote_host', action='store', help='The hostname that '
+        'will be used by the client target to connect to the server target')
 
     for target in SERVER_TARGETS + CLIENT_TARGETS:
         ctx.load(target, tooldir='buildmeta')
@@ -30,43 +33,27 @@ def options(ctx):
 
 
 def configure(ctx):
-    target_server = ctx.options.server_targets
+    server_target = ctx.options.server
 
-    if not target_server:
-        ctx.fatal('--server_targets is a required argument.')
+    if not server_target:
+        ctx.fatal('--server is a required argument.')
 
-    target_server = target_server.split(',')
-    targets = []
+    if server_target not in SERVER_TARGETS:
+        ctx.fatal('Unknown server target %r.' % (server_target,))
 
-    for target in target_server:
-        if target not in SERVER_TARGETS:
-            ctx.fatal('Unknown server target %r.' % (target,))
+    ctx.env.SERVER_TARGET = server_target
 
-        targets.append(target.strip())
 
-    ctx.env.SERVER_TARGETS = targets
+    client_target = ctx.options.client
 
-    client_targets = ctx.options.client_targets
+    if not client_target:
+        ctx.fatal('--client is a required argument.')
 
-    if not client_targets:
-        ctx.fatal('--client_targets is a required argument.')
+    if client_target not in CLIENT_TARGETS:
+        ctx.fatal('Unknown client target %r.' % (client_target,))
 
-    client_targets = client_targets.split(',')
-    targets = []
+    ctx.env.CLIENT_TARGET = client_target
 
-    for target in client_targets:
-        if target not in CLIENT_TARGETS:
-            ctx.fatal('Unknown client target %r.' % (target,))
-
-        targets.append(target.strip())
-
-    ctx.env.CLIENT_TARGETS = targets
-
-    if not ctx.env.SERVER_TARGETS:
-        ctx.fatal('At least one server target must be specified')
-
-    if not ctx.env.CLIENT_TARGETS:
-        ctx.fatal('At least one client target must be specified')
 
     protocol = ctx.options.protocol
 
@@ -78,7 +65,28 @@ def configure(ctx):
 
     ctx.env.PROTOCOL = protocol
 
-    for target in ctx.env.SERVER_TARGETS + ctx.env.CLIENT_TARGETS:
+
+    remote_host = ctx.options.remote_host
+
+    if not remote_host:
+        ctx.fatal('--remote_host is a required argument.')
+
+
+    # parse remote_host for host:port
+    host = remote_host
+    port = '1935'
+    res = remote_host.split(':')
+
+    if res[0] != remote_host:
+        host, port = res
+
+    ctx.env.REMOTE_SERVER = host + ':' + port
+    ctx.msg('Setting REMOTE_SERVER', ctx.env.REMOTE_SERVER)
+
+    ctx.load('python')
+    ctx.check_python_module('jinja2')
+
+    for target in [ctx.env.SERVER_TARGET, ctx.env.CLIENT_TARGET]:
         ctx.load(target, tooldir='buildmeta')
 
 
@@ -89,7 +97,7 @@ def build(ctx):
 
     buildmeta.clear_test_file(ctx)
 
-    for target in ctx.env.SERVER_TARGETS + ctx.env.CLIENT_TARGETS:
+    for target in [ctx.env.SERVER_TARGET, ctx.env.CLIENT_TARGET]:
         ctx.load(target, tooldir='buildmeta')
 
     buildmeta.write_test_file(ctx, buildmeta.get_tests(ctx))

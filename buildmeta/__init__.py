@@ -37,6 +37,7 @@ def get_test_file(ctx):
     return TestContainer(eval(node.read()[8:]))
 
 
+
 def write_test_file(ctx, tests):
     node = ctx.path.find_or_declare('tests.py')
 
@@ -80,7 +81,6 @@ def build_runner(ctx):
     context = ctx.env.get_merged_dict().copy()
 
     context['LOCAL_SERVER'] = 'localhost:23456'
-    context['REMOTE_SERVER'] = ctx.env.SERVER_ROOT
 
     generate(src, dest, **context)
     os.chmod(dest.abspath(), 0755)
