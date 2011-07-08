@@ -90,7 +90,7 @@ def build_swf(ctx):
 
     swf_suite = ctx.path.find_or_declare('swf/suite')
 
-    for f in ctx.path.ant_glob('src/**/swf/main.as'):
+    for f in ctx.path.ant_glob('src/suite/**/swf/main.as'):
         rel_path = f.srcpath()
 
         split_namespace = rel_path.split(os.path.sep)[2:-2]

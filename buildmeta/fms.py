@@ -89,7 +89,7 @@ def build_apps(ctx):
 
     fms_build = ctx.path.find_or_declare('fms')
 
-    for f in ctx.path.ant_glob('src/**/fms/main.asc'):
+    for f in ctx.path.ant_glob('src/suite/**/fms/main.asc'):
         app_src_dir = f.parent
         rel_path = f.abspath()[len(ctx.top_dir):].strip(os.path.sep)
 

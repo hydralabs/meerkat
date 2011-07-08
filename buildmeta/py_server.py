@@ -40,7 +40,7 @@ def build_apps(ctx):
 
     server_build_node = ctx.path.find_or_declare('python/server')
 
-    for f in ctx.path.ant_glob('src/**/python/server.py'):
+    for f in ctx.path.ant_glob('src/suite/**/python/server.py'):
         rel_path = f.srcpath()
 
         split_path = rel_path.split(os.path.sep)
