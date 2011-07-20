@@ -1,0 +1,11 @@
+Calling a server and client method must be able to return results in an
+asynchronous manner.
+
+It appears that FMS and SWF can't do this but they are included in this test so
+that RTMPy can be tested properly.
+
+1. The client connects to the server and immediately calls
+   `async_server_call()`. It expects a result of 'foobar'.
+2. On connection, the server immediately calls `async_client_call()` and if it
+   gets the expected result back, fires another call `server_success()`.
+
