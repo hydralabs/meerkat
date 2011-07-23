@@ -27,9 +27,9 @@ package {
                 return;
             }
 
-            if (event.info.code == "NetConnection.Connect.Closed")
+            if (event.info.code == "NetConnection.Connect.Closed" && this.rejected)
             {
-                this.success()
+                this.success();
 
                 return;
             }
