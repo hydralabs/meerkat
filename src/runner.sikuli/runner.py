@@ -6,7 +6,7 @@ swf_to_play = sys.argv[2]
 
 full_path = 'file://' + os.getcwd() + os.path.sep + swf_to_play
 
-test_timeout = 10
+test_timeout = 10.0
 
 result = 'pending'
 
@@ -71,12 +71,13 @@ def get_test_result():
 
 
 
-
 try:
     open_swf()
     get_test_result()
 finally:
+    app.focus()
     type("q", KEY_CMD)
+
 
 
 if result == 'pending':
