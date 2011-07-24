@@ -18,17 +18,17 @@ class Client(server.Client):
     def makeClientCall(self):
         """
         """
-        self.server_deferred = self.call('async_client_call', notify=True)
+        d = self.call('async_client_call', notify=True)
 
         def cb(result):
-            if result == 'foobar':
+            if result == 'bazgak':
                 self.call('server_succeed')
 
                 return
 
             raise RuntimeError
 
-        self.server_deferred.addCallback(cb)
+        d.addCallback(cb)
 
 
 
