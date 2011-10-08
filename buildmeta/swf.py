@@ -101,7 +101,8 @@ def build_swf(ctx):
         p = swf_suite.find_or_declare(os.path.join(*split_namespace))
 
         generate_meerkat_lib(ctx, p,
-            server_url=ctx.env.PROTOCOL + '://localhost:23456/' + namespace)
+            server_url=ctx.env.PROTOCOL + '://localhost:23456/' + namespace,
+            amf_encoding=ctx.options.amf_encoding)
 
         tgt = swf_suite.find_or_declare(namespace + '.swf')
 

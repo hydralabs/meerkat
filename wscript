@@ -10,13 +10,16 @@ out = 'build'
 
 SERVER_TARGETS = ('py_server', 'fms')
 CLIENT_TARGETS = ('swf', 'py_client')
+# supported protocols
 PROTOCOLS = ('rtmp',)
+AMF_VERSIONS = ('0', 3)
 
 
 def options(ctx):
     ctx.add_option('--server', action='store',
         help='A server component to build (and test). Choose one from %r' % (
             SERVER_TARGETS,))
+
     ctx.add_option('--client', action='store',
         help='A client component to build (and test). Choose one from %r' % (
             CLIENT_TARGETS,))
@@ -26,6 +29,9 @@ def options(ctx):
 
     ctx.add_option('--remote_host', action='store', help='The hostname that '
         'will be used by the client target to connect to the server target')
+
+    ctx.add_option('--amf_encoding', action='store', help='The AMF version used '
+        'to connect to the server target', default='0')
 
     for target in SERVER_TARGETS + CLIENT_TARGETS:
         ctx.load(target, tooldir='buildmeta')
@@ -64,6 +70,15 @@ def configure(ctx):
         ctx.fatal('Unknown protocol %r.' % (protocol,))
 
     ctx.env.PROTOCOL = protocol
+
+
+    amf_encoding = ctx.options.amf_encoding
+
+    if not amf_encoding:
+        ctx.fatal('--amf_encoding is a required argument.')
+
+    if amf_encoding not in AMF_VERSIONS:
+        ctx.fatal('Unknown AMF encoding %r.' % (amf_encoding,))
 
 
     remote_host = ctx.options.remote_host

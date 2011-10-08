@@ -27,6 +27,8 @@ package meerkat
         public var loggingUrl:String = '{{ logging_url }}';
         public var nc:NetConnection;
 
+        public var objectEncoding:int = {{ amf_encoding }};
+
 
         public function TestCase()
         {
@@ -50,7 +52,7 @@ package meerkat
         {
             var nc:NetConnection = new NetConnection();
 
-            nc.objectEncoding = 0;
+            nc.objectEncoding = this.objectEncoding;
 
             // NetStatus
             nc.addEventListener(NetStatusEvent.NET_STATUS, function(event:NetStatusEvent):void
